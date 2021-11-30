@@ -1,8 +1,8 @@
 import * as esbuild from 'esbuild-wasm'
-import { useState, useEffect, useRef } from "react";
-import ReactDOM from "react-dom";
-import { fetchPlugin } from './plugins/fetch-plugin';
-import { unpkgPathPlugin } from './plugins/unpkg-path-plugin';
+import { useState, useEffect, useRef } from 'react'
+import ReactDOM from 'react-dom'
+import { fetchPlugin } from './plugins/fetch-plugin'
+import { unpkgPathPlugin } from './plugins/unpkg-path-plugin'
 
 const App = () => {
   const ref = useRef<any>()
@@ -10,16 +10,16 @@ const App = () => {
   const [code, setCode] = useState('')
 
   const startService = async () => {
-    ref.current =  await esbuild.startService({
+    ref.current = await esbuild.startService({
       worker: true,
-      wasmURL: '/esbuild.wasm'
+      wasmURL: '/esbuild.wasm',
     })
   }
 
   useEffect(() => {
     startService()
   }, [])
-  
+
   const onClick = async () => {
     if (!ref.current) {
       return
@@ -29,14 +29,11 @@ const App = () => {
       entryPoints: ['index.js'],
       bundle: true,
       write: false,
-      plugins: [
-        unpkgPathPlugin(),
-        fetchPlugin(input)
-      ],
+      plugins: [unpkgPathPlugin(), fetchPlugin(input)],
       define: {
         'process.env.NODE_ENV': '"production"',
-        global: 'window'
-      }
+        global: 'window',
+      },
     })
 
     console.log(result)
@@ -44,17 +41,18 @@ const App = () => {
     setCode(result.outputFiles[0].text)
   }
 
-  return <div>
-    <textarea value={input} onChange={e => setInput(e.target.value)}>
-    </textarea>
+  return (
     <div>
-      <button onClick={onClick}>Submit</button>
+      <textarea
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      ></textarea>
+      <div>
+        <button onClick={onClick}>Submit</button>
+      </div>
+      <pre>{code}</pre>
     </div>
-    <pre>{code}</pre>
-  </div>
+  )
 }
 
-ReactDOM.render(
-  <App />,
-  document.querySelector('#root') 
-)
+ReactDOM.render(<App />, document.querySelector('#root'))
